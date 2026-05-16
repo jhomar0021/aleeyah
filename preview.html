@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta name="theme-color" content="#f3e8ff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Her Motion Gallery 💜</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: linear-gradient(135deg, #ffffff, #f3e8ff);
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            touch-action: manipulation;
+        }
+
+        /* START SCREEN */
+
+        .start-screen {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, #ffffff, #f3e8ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            flex-direction: column;
+            transition: 1s;
+        }
+
+        .start-btn {
+            padding: 18px 40px;
+            border: none;
+            border-radius: 50px;
+            background: #a855f7;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.3);
+            transition: 0.3s;
+        }
+
+        .start-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* MAIN FRAME */
+
+        .frame {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        img {
+            position: absolute;
+            width: auto;
+            height: auto;
+            max-width: 92vw;
+            max-height: 82vh;
+            border-radius: 24px;
+            object-fit: contain;
+
+            box-shadow:
+                0 20px 60px rgba(106, 13, 173, 0.25),
+                0 0 40px rgba(168, 85, 247, 0.15);
+
+            will-change: transform, opacity;
+            transition:
+                transform 1.2s cubic-bezier(.22, 1, .36, 1),
+                opacity 1.2s ease;
+        }
+
+        /* CAPTION */
+
+        .caption {
+            position: absolute;
+            bottom: env(safe-area-inset-bottom, 25px);
+            width: 100%;
+            text-align: center;
+            color: #6a0dad;
+            font-size: clamp(16px, 4vw, 24px);
+            font-weight: bold;
+            padding: 0 20px;
+            text-shadow: 0 2px 10px rgba(255, 255, 255, 0.6);
+        }
+
+        /* BACKGROUND GLOW */
+
+        .glow {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.18), transparent);
+            border-radius: 50%;
+            filter: blur(40px);
+            animation: pulse 6s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from {
+                transform: scale(1);
+            }
+
+            to {
+                transform: scale(1.25);
+            }
+        }
+
+        /* ENTRANCE ANIMATIONS */
+
+        .enter-left {
+            transform: translateX(-180%) rotate(-15deg) scale(0.8);
+            opacity: 0;
+        }
+
+        .enter-right {
+            transform: translateX(180%) rotate(15deg) scale(0.8);
+            opacity: 0;
+        }
+
+        .enter-up {
+            transform: translateY(-180%) scale(1.2);
+            opacity: 0;
+        }
+
+        .enter-down {
+            transform: translateY(180%) scale(0.7);
+            opacity: 0;
+        }
+
+        .enter-zoom {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .enter-rotate {
+            transform: rotate(220deg) scale(0);
+            opacity: 0;
+        }
+
+        .enter-flip {
+            transform: rotateY(90deg);
+            opacity: 0;
+        }
+
+        .enter-spin {
+            transform: scale(0.2) rotate(-360deg);
+            opacity: 0;
+        }
+
+        .enter-full {
+            transform: scale(1.8);
+            opacity: 0;
+        }
+
+        /* ACTIVE */
+
+        .active {
+            transform: translate(0, 0) rotate(0deg) scale(1);
+            opacity: 1;
+        }
+
+        /* EXIT ANIMATIONS */
+
+        .exit-left {
+            transform: translateX(-180%) rotate(-20deg) scale(0.7);
+            opacity: 0;
+        }
+
+        .exit-right {
+            transform: translateX(180%) rotate(20deg) scale(0.7);
+            opacity: 0;
+        }
+
+        .exit-up {
+            transform: translateY(-180%) scale(1.3);
+            opacity: 0;
+        }
+
+        .exit-down {
+            transform: translateY(180%) scale(0.6);
+            opacity: 0;
+        }
+
+        .exit-zoom {
+            transform: scale(2.5);
+            opacity: 0;
+        }
+
+        .exit-rotate {
+            transform: rotate(-220deg) scale(0);
+            opacity: 0;
+        }
+
+        .exit-flip {
+            transform: rotateY(-90deg);
+            opacity: 0;
+        }
+
+        .exit-spin {
+            transform: scale(0.1) rotate(360deg);
+            opacity: 0;
+        }
+
+        .exit-full {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        /* MOBILE */
+
+        @media(max-width:768px) {
+
+            img {
+                max-width: 95vw;
+                max-height: 75vh;
+                border-radius: 18px;
+            }
+
+            .caption {
+                font-size: 18px;
+            }
+
+            .start-btn {
+                width: 80%;
+                max-width: 300px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- START SCREEN -->
+
+    <div class="start-screen" id="startScreen">
+
+        <button class="start-btn" onclick="startGallery()">
+            💜 Tap To Start 💜
+        </button>
+
+    </div>
+
+    <!-- MAIN -->
+
+    <div class="frame">
+
+        <div class="glow"></div>
+
+        <img id="photo" src="image1.jfif">
+
+        <div class="caption" id="caption">
+            💜 Her 💜
+        </div>
+
+    </div>
+
+    <!-- MUSIC -->
+
+    <audio id="music" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script>
+
+        const images = [
+            "image1.jfif",
+            "image2.jfif",
+            "image3.jfif",
+            "image4.jfif",
+            "image5.jfif",
+            "image6.jfif",
+            "image7.jfif",
+            "image8.jfif",
+            "image9.jfif",
+            "image10.jfif"
+        ];
+
+        const captions = [
+            "💜 Her smile",
+            "✨ Soft moments",
+            "🌸 Pure beauty",
+            "💫 My favorite view",
+            "💖 Always her",
+            "🌙 Dream girl",
+            "🌷 Little memories",
+            "💜 Just her again",
+            "✨ Endless beauty",
+            "💜 My person"
+        ];
+
+        const enters = [
+            "enter-left",
+            "enter-right",
+            "enter-up",
+            "enter-down",
+            "enter-zoom",
+            "enter-rotate",
+            "enter-flip",
+            "enter-spin",
+            "enter-full"
+        ];
+
+        const exits = [
+            "exit-left",
+            "exit-right",
+            "exit-up",
+            "exit-down",
+            "exit-zoom",
+            "exit-rotate",
+            "exit-flip",
+            "exit-spin",
+            "exit-full"
+        ];
+
+        let index = 0;
+
+        const photo = document.getElementById("photo");
+        const caption = document.getElementById("caption");
+
+        function randomAnimation(array) {
+            return array[Math.floor(Math.random() * array.length)];
+        }
+
+        function changeImage() {
+
+            const exitAnim = randomAnimation(exits);
+
+            photo.className = exitAnim;
+
+            setTimeout(() => {
+
+                index = (index + 1) % images.length;
+
+                photo.src = images[index];
+
+                caption.innerText = captions[index];
+
+                const enterAnim = randomAnimation(enters);
+
+                photo.className = "";
+
+                void photo.offsetWidth;
+
+                photo.classList.add(enterAnim);
+
+                requestAnimationFrame(() => {
+                    photo.classList.add("active");
+                });
+
+            }, 700);
+        }
+
+        function startGallery() {
+
+            const music = document.getElementById("music");
+
+            music.play().catch(() => { });
+
+            document.getElementById("startScreen").style.opacity = "0";
+
+            setTimeout(() => {
+                document.getElementById("startScreen").style.display = "none";
+            }, 1000);
+
+            photo.classList.add("active");
+
+            setInterval(changeImage, 3500);
+
+            // fullscreen mobile support
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => { });
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
